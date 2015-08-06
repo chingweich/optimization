@@ -60,7 +60,7 @@ void makeEff(){
   string  masspoint[13]={"600","800","1000","1200","1400","1600","1800","2000","2500","3000","3500","4000","4500"};
   for (int massP=0;massP<13;massP++){
   TString fin =Form("root_files/signal-%s.root",masspoint[massP].data()),
-  //fin2 = Form("root_files/BulkGravitonZlepZqq-%s.root",masspoint[massP].data());
+    //fin2 = Form("root_files/BulkGravitonZlepZqq-%s.root",masspoint[massP].data());
   fin2="root_files/DYBkg.root";
   f= TFile::Open(fin.Data());
   f2= TFile::Open(fin2.Data());
@@ -183,9 +183,9 @@ void makeEff(){
   leg->AddEntry(th1Eff2,"Bkg. efficiency");
   leg->Draw("same");
   
-  if(massP==0)c1->Print("pdf/signv2.pdf(");
+  if(massP==0)c1->Print("pdf/signv3.pdf(");
   //else if(massP==12)c1->Print("pdf/signv2.pdf)");
-  else c1->Print("pdf/signv2.pdf");
+  else c1->Print("pdf/signv3.pdf");
   
   th1SignFull->SetTitle(Form("%s",masspoint[massP].data()));
   th1SignFull->SetMinimum(0);
@@ -198,7 +198,7 @@ void makeEff(){
   th1Eff2Full->Draw("same");
   leg->Draw("same");
   
-  c1->Print("pdf/signv2.pdf");
+  c1->Print("pdf/signv3.pdf");
   
   for(int i=0;i<numberBin;i++){
 	  th1Sign->SetBinContent(i+1,signNum[signINum[i]][signJNum[i]]);
@@ -221,6 +221,8 @@ void makeEff(){
 	  th1Eff2Full->SetBinError(i+1,err2[signINum[i]][signJNum[i]]);
       //th1SignFull->GetXaxis()->SetBinLabel(i+1,Form("%d-%d",bmin[signJ[i]],bmin[signJ[i]]+width[signI[i]]));
       th1SignFull->GetXaxis()->SetBinLabel(i+1,"");
+      th1EffFull->GetXaxis()->SetBinLabel(i+1,"");
+      th1Eff2Full->GetXaxis()->SetBinLabel(i+1,"");
     //cout<<"range=["<<bmin[signJ[i]]<<","<<bmin[signJ[i]]+width[signI[i]]<<"] and significant="<<sign[signI[i]][signJ[i]]<<endl;
   }
   
@@ -257,7 +259,7 @@ void makeEff(){
    axis->SetLabelColor(4);
    axis->Draw();
   
-  c1->Print("pdf/signv2.pdf");
+  c1->Print("pdf/signv3.pdf");
   
   
   
@@ -281,8 +283,8 @@ void makeEff(){
    axis2->SetLabelColor(4);
    axis2->Draw();
   
-  if(massP==12)c1->Print("pdf/signv2.pdf)");
-  else c1->Print("pdf/signv2.pdf");
+  if(massP==12)c1->Print("pdf/signv3.pdf)");
+  else c1->Print("pdf/signv3.pdf");
   
   }
 
