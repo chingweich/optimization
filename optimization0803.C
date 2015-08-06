@@ -45,7 +45,7 @@ void optimization0803(){
   //DY bkg
   // TString endfix ="DYBkg";
   // double scaleF=0;
-  //   double xsecF=2008.4;
+  // double xsecF=2008.4;
   // for(int w=1;w<363;w++){
   //   f = TFile::Open(Form("/data7/khurana/NCUGlobalTuples/SPRING15/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/crab_DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_ForEIKO/150729_202330/0000/NCUGlobalTuples_%d.root",w));
   //   if (!f || !f->IsOpen())continue;
@@ -54,18 +54,18 @@ void optimization0803(){
 
 
   //BulkGravitonZlepZqq  noCleaning_BulkGravToZZToZlepZhad_narrow_M-1000_13TeV-madgraph.root
-  string  masspoint[13]={"600","800","1000","1200","1400","1600","1800","2000","2500","3000","3500","4000","4500"};
-  double xsecFB[13]={0.046310769831789535,0.010953371285280107,0.0033153186581553304,0.0011796819730577413,0.0004688386674106958,0.00025472097,0.00007503744,0.00004542880185027153,8.614571731526816e-6,1.9201182127764607e-6,4.25018556e-7,9.40119436e-8,2.08241719e-8};
+   string  masspoint[13]={"600","800","1000","1200","1400","1600","1800","2000","2500","3000","3500","4000","4500"};
+   double xsecFB[13]={0.046310769831789535,0.010953371285280107,0.0033153186581553304,0.0011796819730577413,0.0004688386674106958,0.00025472097,0.00007503744,0.00004542880185027153,8.614571731526816e-6,1.9201182127764607e-6,4.25018556e-7,9.40119436e-8,2.08241719e-8};
   double xsecFB2[13]={0.184219,0.142802,0.125936,0.117445,0.112554,0.109472,0.101401,0.10594,0.103732,0.102549,0.101841,0.101384,0.100927};
      for (int massP=0;massP<13;massP++){
        TString endfix =Form("BulkGravitonZlepZqq-%s",masspoint[massP].data());
        double scaleF=0;
-       double xsecF=xsecFB[massP]*xsecFB2[massP]*0.046652341;
-       for(int w=1;w<2;w++){
-	 f = TFile::Open(Form("/data2/syu/13TeV/BulkGravitonZlepZqq/noCleaning_BulkGravToZZToZlepZhad_narrow_M-%s_13TeV-madgraph.root",masspoint[massP].data()));
-	 if (!f || !f->IsOpen())continue;
-	 TDirectory * dir = (TDirectory*)f->Get(Form("/data2/syu/13TeV/BulkGravitonZlepZqq/noCleaning_BulkGravToZZToZlepZhad_narrow_M-%s_13TeV-madgraph.root:/tree",masspoint[massP].data()));
-	 dir->GetObject("treeMaker",tree);
+       double xsecF=xsecFB[massP]*xsecFB2[massP]*0.047063412;
+      for(int w=1;w<2;w++){
+  	 f = TFile::Open(Form("/data2/syu/13TeV/BulkGravitonZlepZqq/noCleaning_BulkGravToZZToZlepZhad_narrow_M-%s_13TeV-madgraph.root",masspoint[massP].data()));
+  	 if (!f || !f->IsOpen())continue;
+  	 TDirectory * dir = (TDirectory*)f->Get(Form("/data2/syu/13TeV/BulkGravitonZlepZqq/noCleaning_BulkGravToZZToZlepZhad_narrow_M-%s_13TeV-madgraph.root:/tree",masspoint[massP].data()));
+   	 dir->GetObject("treeMaker",tree);
 
 
   //Signal
@@ -360,6 +360,7 @@ void optimization0803(){
   }
   TFile* outFile = new TFile(Form("root_files/%s.root",endfix.Data()),"recreate");       
   
+  th1->Sumw2();
   th1->Scale(5000*xsecF/scaleF);
   th1->Write();
   th2->Write();
