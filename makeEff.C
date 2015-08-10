@@ -58,7 +58,7 @@ void makeEff(TString fin){
 */
 void makeEff(){
   c1 = new TCanvas("c1","",1360,768);
-  string output="signv4+";
+  string output="signv4";
   int twikiSign[13][nWidth][nBmin];
   int twikiSignNum[13][nWidth][nBmin];
   //double twikiWidth[13][nWidth][nBmin];
@@ -80,7 +80,7 @@ void makeEff(){
   TH1F * th3 = (TH1F*)f3->FindObjectAny("HMass");
   //cout<<"before"<<th2->GetEntries()<<endl;
   th2->Sumw2();
-  th2->Add(th3);
+  //th2->Add(th3);
   //cout<<"after"<<th2->GetEntries()<<endl;
   double eff[nWidth][nBmin],eff2[nWidth][nBmin],err[nWidth][nBmin],err2[nWidth][nBmin];
   double sign[nWidth][nBmin],signCP[nWidth][nBmin],signErr[nWidth][nBmin];
@@ -181,7 +181,7 @@ void makeEff(){
   double x2NDC = 0.9122;
   double y2NDC = 0.9860;
   
-  th1Sign->SetTitle(Form("largest 15 Sign. windows,%sGev",masspoint[massP].data()));
+  th1Sign->SetTitle(Form("largest 15 Sign.(eff),%sGev",masspoint[massP].data()));
   th1Sign->SetMinimum(0);
   th1Sign->SetMaximum(1);
   th1Sign->SetLineColor(4);
@@ -202,7 +202,7 @@ void makeEff(){
   //else if(massP==12)c1->Print("pdf/signv2.pdf)");
   else c1->Print(Form("pdf/%s.pdf",output.data()));
   
-  th1SignFull->SetTitle(Form("%s",masspoint[massP].data()));
+  th1SignFull->SetTitle(Form("all windows(eff),%sGev",masspoint[massP].data()));
   th1SignFull->SetMinimum(0);
   th1SignFull->SetMaximum(1);
   th1SignFull->SetLineColor(4);
@@ -248,7 +248,7 @@ void makeEff(){
   th1EffFull->SetMaximum(1);
   th1Eff->SetYTitle("efficiency");
   th1EffFull->SetYTitle("efficiency");
-  
+  th1Eff->SetTitle(Form("largest 15 Sign.(Num),%sGev",masspoint[massP].data()));
   th1Eff->Draw();
   th1Eff2->Draw("same");
   
@@ -280,7 +280,7 @@ void makeEff(){
   
   
   
-  
+  th1EffFull->SetTitle(Form("all windows(Num),%sGev",masspoint[massP].data()));
   th1EffFull->Draw();
   th1Eff2Full->Draw("same");
   c1->Update();
