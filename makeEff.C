@@ -19,9 +19,10 @@
 #include <string>
 #include "TGaxis.h"
 #include "TPad.h"
+#include <fstream>
 
-#define  nWidth 12
-#define  nBmin 41 
+#define  nWidth 17
+#define  nBmin 48
 
 double  getEff(TH1F *h,int bmin,int bmax);
 double getSign(double d1,double d2);
@@ -29,7 +30,7 @@ double  getErr(TH1F *h,int bmin,int bmax);
 
 using namespace std;
 
-TFile *f,*f2;
+TFile *f,*f2,*f3;
 TCanvas* c1;
 
 void setLeg(TLegend *leg){
@@ -38,7 +39,7 @@ leg->SetFillStyle(0);
 leg->SetTextSize(0.03);
 leg->SetBorderSize(2);
 }
-
+/*
 void makeEff(TString fin){
 
   c1 = new TCanvas("c1","",1360,768);
@@ -54,20 +55,33 @@ void makeEff(TString fin){
     }
   }
 }
-
+*/
 void makeEff(){
   c1 = new TCanvas("c1","",1360,768);
+  string output="signv4+";
+  int twikiSign[13][nWidth][nBmin];
+  int twikiSignNum[13][nWidth][nBmin];
+  //double twikiWidth[13][nWidth][nBmin];
+  //double twikiBmin[13][nWidth][nBmin];
   string  masspoint[13]={"600","800","1000","1200","1400","1600","1800","2000","2500","3000","3500","4000","4500"};
+  int width [nWidth]={20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100};
+  int bmin[nBmin]={50,55,60,65,70,75,80,81,82,83,84,85,86,87,88,89,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120};
   for (int massP=0;massP<13;massP++){
   TString fin =Form("root_files/signal-%s.root",masspoint[massP].data()),
-    //fin2 = Form("root_files/BulkGravitonZlepZqq-%s.root",masspoint[massP].data());
-  fin2="root_files/DYBkg.root";
+    //fin2 = Form("root_files/BulkGravitonZlepZqq-%s200.root",masspoint[massP].data());
+     fin2="root_files/DYBkg.root";
   f= TFile::Open(fin.Data());
   f2= TFile::Open(fin2.Data());
   TH1F * th1 = (TH1F*)f->FindObjectAny("HMass");
   TH1F * th2 = (TH1F*)f2->FindObjectAny("HMass");
-  int width [nWidth]={20,25,30,35,40,45,50,55,60,65,70,75};
-  int bmin[nBmin]={81,82,83,84,85,86,87,88,89,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120};
+  
+  TString fin3 = Form("root_files/BulkGravitonZlepZqq-%s.root",masspoint[massP].data());
+  f3= TFile::Open(fin3.Data());
+  TH1F * th3 = (TH1F*)f3->FindObjectAny("HMass");
+  //cout<<"before"<<th2->GetEntries()<<endl;
+  th2->Sumw2();
+  th2->Add(th3);
+  //cout<<"after"<<th2->GetEntries()<<endl;
   double eff[nWidth][nBmin],eff2[nWidth][nBmin],err[nWidth][nBmin],err2[nWidth][nBmin];
   double sign[nWidth][nBmin],signCP[nWidth][nBmin],signErr[nWidth][nBmin];
   double signNum[nWidth][nBmin],signNumCP[nWidth][nBmin],signNumErr[nWidth][nBmin];
@@ -150,6 +164,7 @@ void makeEff(){
   
   
   for(unsigned int i=0;i<signI.size();i++){
+	  twikiSign[massP][signI[i]][signJ[i]]=i+1;
 	  th1SignFull->SetBinContent(i+1,sign[signI[i]][signJ[i]]);
 	  th1SignFull->SetBinError(i+1,signErr[signI[i]][signJ[i]]);
 	  th1EffFull->SetBinContent(i+1,eff[signI[i]][signJ[i]]);
@@ -183,9 +198,9 @@ void makeEff(){
   leg->AddEntry(th1Eff2,"Bkg. efficiency");
   leg->Draw("same");
   
-  if(massP==0)c1->Print("pdf/signv3.pdf(");
+  if(massP==0)c1->Print(Form("pdf/%s.pdf(",output.data()));
   //else if(massP==12)c1->Print("pdf/signv2.pdf)");
-  else c1->Print("pdf/signv3.pdf");
+  else c1->Print(Form("pdf/%s.pdf",output.data()));
   
   th1SignFull->SetTitle(Form("%s",masspoint[massP].data()));
   th1SignFull->SetMinimum(0);
@@ -198,7 +213,7 @@ void makeEff(){
   th1Eff2Full->Draw("same");
   leg->Draw("same");
   
-  c1->Print("pdf/signv3.pdf");
+  c1->Print(Form("pdf/%s.pdf",output.data()));
   
   for(int i=0;i<numberBin;i++){
 	  th1Sign->SetBinContent(i+1,signNum[signINum[i]][signJNum[i]]);
@@ -213,6 +228,7 @@ void makeEff(){
   
   
   for(unsigned int i=0;i<signINum.size();i++){
+	  twikiSignNum[massP][signINum[i]][signJNum[i]]=i+1;
 	  th1SignFull->SetBinContent(i+1,signNum[signINum[i]][signJNum[i]]);
 	  th1SignFull->SetBinError(i+1,signNumErr[signINum[i]][signJNum[i]]);
 	  th1EffFull->SetBinContent(i+1,eff[signINum[i]][signJNum[i]]);
@@ -259,7 +275,7 @@ void makeEff(){
    axis->SetLabelColor(4);
    axis->Draw();
   
-  c1->Print("pdf/signv3.pdf");
+  c1->Print(Form("pdf/%s.pdf",output.data()));
   
   
   
@@ -283,11 +299,29 @@ void makeEff(){
    axis2->SetLabelColor(4);
    axis2->Draw();
   
-  if(massP==12)c1->Print("pdf/signv3.pdf)");
-  else c1->Print("pdf/signv3.pdf");
+  if(massP==12)c1->Print(Form("pdf/%s.pdf)",output.data()));
+  else c1->Print(Form("pdf/%s.pdf",output.data()));
   
   }
-
+  ofstream myfile;
+  myfile.open ("txt/twikiOP.txt");
+  myfile<<"|*windowRange*|";
+  for (int massP=0;massP<13;massP++)myfile<<"*"<<masspoint[massP].data()<<"Eff*|*"<<masspoint[massP].data()<<"Num*|";
+  myfile<<"*avg.rank(eff)*|*avg.rank(Num)*|*avg.rank(total)*|"<<endl;
+  for(int j=0;j<nBmin;j++){
+	for(int i=0;i<nWidth;i++){
+		myfile<<"|"<<bmin[j]<<"to"<<bmin[j]+width[i]<<"|";
+	    double temp1=0,temp2=0;
+		for (int massP=0;massP<13;massP++){
+			myfile<<twikiSign[massP][i][j]<<"|"<<twikiSignNum[massP][i][j]<<"|";
+			temp1+=twikiSign[massP][i][j];
+			temp2+=twikiSignNum[massP][i][j];
+		}
+		myfile<<temp1/13<<"|"<<temp2/13<<"|"<<(temp1+temp2)/26<<"|"<<endl;
+		//<<"to"<<bmin[i]+width[j]<<"|"<<endl;
+		//cout<<j<<","<<i<<endl;
+	}
+  }
 }
 
 double  getEff(TH1F *h,int bmin,int bmax){
