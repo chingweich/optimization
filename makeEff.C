@@ -58,7 +58,7 @@ void makeEff(TString fin){
 */
 void makeEff(){
   c1 = new TCanvas("c1","",1360,768);
-  string output="signv4";
+  string output="signv4+";
   int twikiSign[13][nWidth][nBmin];
   int twikiSignNum[13][nWidth][nBmin];
   //double twikiWidth[13][nWidth][nBmin];
@@ -80,7 +80,7 @@ void makeEff(){
   TH1F * th3 = (TH1F*)f3->FindObjectAny("HMass");
   //cout<<"before"<<th2->GetEntries()<<endl;
   th2->Sumw2();
-  //th2->Add(th3);
+  th2->Add(th3);
   //cout<<"after"<<th2->GetEntries()<<endl;
   double eff[nWidth][nBmin],eff2[nWidth][nBmin],err[nWidth][nBmin],err2[nWidth][nBmin];
   double sign[nWidth][nBmin],signCP[nWidth][nBmin],signErr[nWidth][nBmin];
@@ -322,6 +322,71 @@ void makeEff(){
 		//cout<<j<<","<<i<<endl;
 	}
   }
+  myfile<<endl;
+  
+  myfile<<"|*rank*|";
+  for (int massP=0;massP<13;massP++)myfile<<"*"<<masspoint[massP].data()<<"Eff*|";
+  myfile<<endl;
+  vector<int> signINum,signJNum;
+ //for(int ij=0;ij<nWidth*nBmin;ij++){
+    for(int ij=0;ij<15;ij++){
+    myfile<<"|"<<ij+1<<"|";
+	for (int massP=0;massP<13;massP++){
+		double tempSign=10000;
+    	int tempI=0,tempJ=0;
+		for(int i=0;i<nWidth;i++){
+			for(int j=0;j<nBmin;j++){
+				if(twikiSign[massP][i][j]<tempSign){
+					//cout<<"i="<<i<<",j="<<j<<",signcp="<<signCP[i][j]<<",temp="<<tempSign<<endl;
+					tempSign=twikiSign[massP][i][j];
+					tempI=i;
+					tempJ=j;
+					//cout<<tempI<<","<<tempJ<<","<<tempSign<<endl;
+				}
+			}
+		}
+		//signINum.push_back(tempI);
+		//signJNum.push_back(tempJ);
+		//cout<<signCP[tempI][tempJ]<<endl;
+		myfile<<bmin[tempJ]<<"to"<<bmin[tempJ]+width[tempI]<<"|";
+		//cout<<twikiSign[massP][tempI][tempJ];
+		twikiSign[massP][tempI][tempJ]=10000;
+	}
+	myfile<<endl;
+  }
+  myfile<<endl;
+  
+  myfile<<"|*rank*|";
+  for (int massP=0;massP<13;massP++)myfile<<"*"<<masspoint[massP].data()<<"Num*|";
+  myfile<<endl;
+  //vector<int> signINum,signJNum;
+ //for(int ij=0;ij<nWidth*nBmin;ij++){
+    for(int ij=0;ij<15;ij++){
+    myfile<<"|"<<ij+1<<"|";
+	for (int massP=0;massP<13;massP++){
+		double tempSign=10000;
+    	int tempI=0,tempJ=0;
+		for(int i=0;i<nWidth;i++){
+			for(int j=0;j<nBmin;j++){
+				if(twikiSignNum[massP][i][j]<tempSign){
+					//cout<<"i="<<i<<",j="<<j<<",signcp="<<signCP[i][j]<<",temp="<<tempSign<<endl;
+					tempSign=twikiSignNum[massP][i][j];
+					tempI=i;
+					tempJ=j;
+					//cout<<tempI<<","<<tempJ<<","<<tempSign<<endl;
+				}
+			}
+		}
+		//signINum.push_back(tempI);
+		//signJNum.push_back(tempJ);
+		//cout<<signCP[tempI][tempJ]<<endl;
+		myfile<<bmin[tempJ]<<"to"<<bmin[tempJ]+width[tempI]<<"|";
+		//cout<<twikiSign[massP][tempI][tempJ];
+		twikiSignNum[massP][tempI][tempJ]=10000;
+	}
+	myfile<<endl;
+  }
+  myfile<<endl;
 }
 
 double  getEff(TH1F *h,int bmin,int bmax){
