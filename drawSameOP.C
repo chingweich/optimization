@@ -33,11 +33,11 @@ leg->SetBorderSize(2);
 void drawSameOP(){
 	c1 = new TCanvas("c1","",1360,768);
 	string  masspoint[13]={"600","800","1000","1200","1400","1600","1800","2000","2500","3000","3500","4000","4500"};
-  for (int massP=0;massP<13;massP++){
+  for (int massP=0;massP<1;massP++){
 	  
 	  TString fin =Form("root_files/signal-%s.root",masspoint[massP].data()),
       fin2 = Form("root_files/BulkGravitonZlepZqq-%s.root",masspoint[massP].data()),
-      fin3="root_files/DYBkg.root";
+      fin3=Form("root_files/DYtest-%s.root",masspoint[massP].data());
 	  f= TFile::Open(fin.Data());
       f2= TFile::Open(fin2.Data());
 	  f3= TFile::Open(fin3.Data());
@@ -74,6 +74,7 @@ void drawSameOP(){
 	  
 	  th2->SetLineColor(46);
 	  th3->SetLineColor(30);
+	  th1->SetMaximum(th1->GetMaximum()>th3->GetMaximum()?th1->GetMaximum()*1.1:th3->GetMaximum()*1.1);
 	  th1->Draw("hist,e");
 	  th3->Draw("same,hist");
 	  th2->Draw("same,hist");
@@ -89,9 +90,9 @@ void drawSameOP(){
    leg->AddEntry(th2,"DY");
    leg->AddEntry(th3,"BG");
    leg->Draw("same");
-   if(massP==0)c1->Print("pdf/drawSameOP.pdf(");
-   else if (massP==12)c1->Print("pdf/drawSameOP.pdf)");
-   else c1->Print("pdf/drawSameOP.pdf");
+   //if(massP==0)c1->Print("pdf/drawSameOPv5.pdf(");
+   //else if (massP==12)c1->Print("pdf/drawSameOPv5.pdf)");
+   //else c1->Print("pdf/drawSameOPv5.pdf");
 	  
   }
 	

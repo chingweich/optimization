@@ -22,11 +22,12 @@
 #include <fstream>
 
 #define  nWidth 17
-#define  nBmin 48
+#define  nBmin 13
 
 double  getEff(TH1F *h,int bmin,int bmax);
 double getSign(double d1,double d2);
 double  getErr(TH1F *h,int bmin,int bmax);
+double  getErr2(TH1F *h,int bmin,int bmax);
 
 using namespace std;
 
@@ -58,18 +59,20 @@ void makeEff(TString fin){
 */
 void makeEff(){
   c1 = new TCanvas("c1","",1360,768);
-  string output="signv4+";
+  string output="signv5";
   int twikiSign[13][nWidth][nBmin];
   int twikiSignNum[13][nWidth][nBmin];
+  double twikiSignValue[13][nWidth][nBmin];
+  double twikiSignNumValue[13][nWidth][nBmin];
   //double twikiWidth[13][nWidth][nBmin];
   //double twikiBmin[13][nWidth][nBmin];
   string  masspoint[13]={"600","800","1000","1200","1400","1600","1800","2000","2500","3000","3500","4000","4500"};
   int width [nWidth]={20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100};
-  int bmin[nBmin]={50,55,60,65,70,75,80,81,82,83,84,85,86,87,88,89,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120};
+  int bmin[nBmin]={50,55,60,65,70,75,80,85,90,95,100,105,110};
   for (int massP=0;massP<13;massP++){
   TString fin =Form("root_files/signal-%s.root",masspoint[massP].data()),
     //fin2 = Form("root_files/BulkGravitonZlepZqq-%s200.root",masspoint[massP].data());
-     fin2="root_files/DYBkg.root";
+     fin2=Form("root_files/DY-%s.root",masspoint[massP].data());
   f= TFile::Open(fin.Data());
   f2= TFile::Open(fin2.Data());
   TH1F * th1 = (TH1F*)f->FindObjectAny("HMass");
@@ -80,9 +83,9 @@ void makeEff(){
   TH1F * th3 = (TH1F*)f3->FindObjectAny("HMass");
   //cout<<"before"<<th2->GetEntries()<<endl;
   th2->Sumw2();
-  th2->Add(th3);
+  //th2->Add(th3);
   //cout<<"after"<<th2->GetEntries()<<endl;
-  double eff[nWidth][nBmin],eff2[nWidth][nBmin],err[nWidth][nBmin],err2[nWidth][nBmin];
+  double eff[nWidth][nBmin],eff2[nWidth][nBmin],err[nWidth][nBmin],err2[nWidth][nBmin],err2Num[nWidth][nBmin];
   double sign[nWidth][nBmin],signCP[nWidth][nBmin],signErr[nWidth][nBmin];
   double signNum[nWidth][nBmin],signNumCP[nWidth][nBmin],signNumErr[nWidth][nBmin];
   for(int i=0;i<nWidth;i++){
@@ -91,15 +94,21 @@ void makeEff(){
       eff2[i][j]=getEff(th2,bmin[j],bmin[j]+width[i]);
 	  err[i][j]=getErr(th1,bmin[j],bmin[j]+width[i]);
       err2[i][j]=getErr(th2,bmin[j],bmin[j]+width[i]);
+	  err2Num[i][j]=getErr2(th2,bmin[j],bmin[j]+width[i]);
       sign[i][j]=getSign(eff[i][j],eff2[i][j]);
 	  signNum[i][j]=getSign(eff[i][j],eff2[i][j]*th2->Integral());
       signCP[i][j]=sign[i][j];
       signNumCP[i][j]=signNum[i][j];
 	  signErr[i][j]=(1/(1+sqrt(eff2[i][j])))*sqrt(err[i][j]*err[i][j]+ (eff[i][j]*eff[i][j]*err2[i][j]*err2[i][j])/(4*eff2[i][j]*(1+sqrt(eff2[i][j]))*(1+sqrt(eff2[i][j]))));
-      signNumErr[i][j]=(1/(1+sqrt(eff2[i][j]*th2->Integral())))*sqrt(err[i][j]*err[i][j]+ (eff[i][j]*eff[i][j]*err2[i][j]*err2[i][j]*th2->Integral())/(4*eff2[i][j]*(1+sqrt(eff2[i][j]*th2->Integral()))*(1+sqrt(eff2[i][j]*th2->Integral()))));
-
+      //signNumErr[i][j]=(1/(1+sqrt(eff2[i][j]*th2->Integral())))*sqrt(err[i][j]*err[i][j]+ (eff[i][j]*eff[i][j]*err2[i][j]*err2[i][j]*th2->Integral())/(4*eff2[i][j]*(1+sqrt(eff2[i][j]*th2->Integral()))*(1+sqrt(eff2[i][j]*th2->Integral()))));
+	  signNumErr[i][j]=(1/(1+sqrt(eff2[i][j]*th2->Integral())))*sqrt(err[i][j]*err[i][j]+ (eff[i][j]*eff[i][j]*err2Num[i][j]*err2Num[i][j])/(4*eff2[i][j]*th2->Integral()*(1+sqrt(eff2[i][j]*th2->Integral()))*(1+sqrt(eff2[i][j]*th2->Integral()))));
+		if(eff2[i][j]<1e-7){
+			signErr[i][j]=err[i][j]/(1+sqrt(eff2[i][j]));
+			signNumErr[i][j]=err[i][j]/(1+sqrt(eff2[i][j]*th2->Integral()));
+		}
 	  //cout<<"range={"<<bmin[j]<<","<<bmin[j]+width[i]<<"} and efficiency="<<eff[i][j]<<endl;
       //cout<<"range=["<<bmin[j]<<","<<bmin[j]+width[i]<<"] and significant="<<sign[i][j]<<endl;
+	 //if(massP==0)cout<<eff[i][j]<<","<<eff2[i][j]<<endl;
     }
   }
   
@@ -165,6 +174,7 @@ void makeEff(){
   
   for(unsigned int i=0;i<signI.size();i++){
 	  twikiSign[massP][signI[i]][signJ[i]]=i+1;
+	  
 	  th1SignFull->SetBinContent(i+1,sign[signI[i]][signJ[i]]);
 	  th1SignFull->SetBinError(i+1,signErr[signI[i]][signJ[i]]);
 	  th1EffFull->SetBinContent(i+1,eff[signI[i]][signJ[i]]);
@@ -173,6 +183,7 @@ void makeEff(){
 	  th1Eff2Full->SetBinError(i+1,err2[signI[i]][signJ[i]]);
       //th1SignFull->GetXaxis()->SetBinLabel(i+1,Form("%d-%d",bmin[signJ[i]],bmin[signJ[i]]+width[signI[i]]));
       th1SignFull->GetXaxis()->SetBinLabel(i+1,"");
+	  twikiSignValue[massP][signI[i]][signJ[i]]=sign[signI[i]][signJ[i]];
     //cout<<"range=["<<bmin[signJ[i]]<<","<<bmin[signJ[i]]+width[signI[i]]<<"] and significant="<<sign[signI[i]][signJ[i]]<<endl;
   }
   gStyle->SetOptStat(0000000000);
@@ -229,6 +240,7 @@ void makeEff(){
   
   for(unsigned int i=0;i<signINum.size();i++){
 	  twikiSignNum[massP][signINum[i]][signJNum[i]]=i+1;
+	  
 	  th1SignFull->SetBinContent(i+1,signNum[signINum[i]][signJNum[i]]);
 	  th1SignFull->SetBinError(i+1,signNumErr[signINum[i]][signJNum[i]]);
 	  th1EffFull->SetBinContent(i+1,eff[signINum[i]][signJNum[i]]);
@@ -239,6 +251,7 @@ void makeEff(){
       th1SignFull->GetXaxis()->SetBinLabel(i+1,"");
       th1EffFull->GetXaxis()->SetBinLabel(i+1,"");
       th1Eff2Full->GetXaxis()->SetBinLabel(i+1,"");
+	  twikiSignNumValue[massP][signINum[i]][signJNum[i]]=signNum[signINum[i]][signJNum[i]];
     //cout<<"range=["<<bmin[signJ[i]]<<","<<bmin[signJ[i]]+width[signI[i]]<<"] and significant="<<sign[signI[i]][signJ[i]]<<endl;
   }
   
@@ -306,16 +319,21 @@ void makeEff(){
   ofstream myfile;
   myfile.open ("txt/twikiOP.txt");
   myfile<<"|*windowRange*|";
-  for (int massP=0;massP<13;massP++)myfile<<"*"<<masspoint[massP].data()<<"Eff*|*"<<masspoint[massP].data()<<"Num*|";
+  for (int massP=0;massP<13;massP++)myfile<<"*"<<masspoint[massP].data()<<"Num*|";
+  //myfile<<"*";
+  for (int massP=0;massP<13;massP++)myfile<<"*"<<masspoint[massP].data()<<"Eff*|";
   myfile<<"*avg.rank(eff)*|*avg.rank(Num)*|*avg.rank(total)*|"<<endl;
   for(int j=0;j<nBmin;j++){
 	for(int i=0;i<nWidth;i++){
 		myfile<<"|"<<bmin[j]<<"to"<<bmin[j]+width[i]<<"|";
 	    double temp1=0,temp2=0;
 		for (int massP=0;massP<13;massP++){
-			myfile<<twikiSign[massP][i][j]<<"|"<<twikiSignNum[massP][i][j]<<"|";
+			myfile<<twikiSignNum[massP][i][j]<<"("<<twikiSignNumValue[massP][i][j]<<")|";
 			temp1+=twikiSign[massP][i][j];
 			temp2+=twikiSignNum[massP][i][j];
+		}
+		for (int massP=0;massP<13;massP++){
+			myfile<<twikiSign[massP][i][j]<<"("<<twikiSignValue[massP][i][j]<<")|";
 		}
 		myfile<<temp1/13<<"|"<<temp2/13<<"|"<<(temp1+temp2)/26<<"|"<<endl;
 		//<<"to"<<bmin[i]+width[j]<<"|"<<endl;
@@ -390,12 +408,33 @@ void makeEff(){
 }
 
 double  getEff(TH1F *h,int bmin,int bmax){
-  double denom=h->Integral();
-  double nomin=h->Integral(bmin,bmax);
+	if(h->Integral()==0)return 0;
+  double denom=h->Integral();//cout<<"de="<<denom;
+  double nomin=h->Integral(bmin,bmax);//cout<<"no="<<nomin<<endl;
+  
+  
   return nomin/denom;
 }
 
 double  getErr(TH1F *h,int bmin,int bmax){
+	if(h->Integral()==0)return 0;
+  double temp=0,temp2=0;
+  double denom=h->Integral();
+  //double nomin=h->Integral(bmin,bmax);
+  for(int i=1;i<h->GetNbinsX();i++){
+		if(  i>bmin && i<bmax+1){
+			temp+=h->GetBinError(i)*h->GetBinError(i);
+		}
+		else 
+			temp2+=h->GetBinError(i)*h->GetBinError(i);
+	}
+  
+  temp=temp/(h->Integral()*h->Integral())-2*h->Integral(bmin,bmax)*temp/(h->Integral()*h->Integral()*h->Integral())+h->Integral(bmin,bmax)*h->Integral(bmin,bmax)*(temp+temp2)/(h->Integral()*h->Integral()*h->Integral()*h->Integral());
+  
+  return sqrt(temp);
+}
+
+double  getErr2(TH1F *h,int bmin,int bmax){
   double temp=0;
   double denom=h->Integral();
   //double nomin=h->Integral(bmin,bmax);
@@ -403,7 +442,7 @@ double  getErr(TH1F *h,int bmin,int bmax){
 	  temp+=h->GetBinError(i)*h->GetBinError(i);
   }
   temp=sqrt(temp);
-  return temp/denom;
+  return temp;
 }
 
 double getSign(double d1,double d2){
