@@ -28,59 +28,83 @@
 
 using namespace std;
 
-double  getEff(TH1F *h,int bmin,int bmax);
+
 
 TTree *tree;
 TFile *f;
 
 void optimization0807(){
 
-  bool isSignal=0,isBG=0;
+  bool isSignal=0,isBG=0,isDYHT=0;
+string  masspoint[13]={"600","800","1000","1200","1400","1600","1800","2000","2500","3000","3500","4000","4500"};
 
   TH1F * th1 =new TH1F("HMass","HMass",600,0,600); 
   TH1F * th2 =new TH1F("Pt of good","Pt of good",2000,0,2000); 
   TH1F * th3 =new TH1F("Pt of bad","P of bad",2000,0,2000);
   TH1F * thr =new TH1F("Dr of good","deltaR of good",50,0,3);
   TH1F * thr2 =new TH1F("Dr of bad","deltaR of bad",50,0,3);
+  th1->Sumw2();
 
+   double xsecFB[13]={0.046310769831789535,0.010953371285280107,0.0033153186581553304,0.0011796819730577413,0.0004688386674106958,0.00025472097,0.00007503744,0.00004542880185027153,8.614571731526816e-6,1.9201182127764607e-6,4.25018556e-7,9.40119436e-8,2.08241719e-8};
+       double xsecFB2[13]={0.184219,0.142802,0.125936,0.117445,0.112554,0.109472,0.101401,0.10594,0.103732,0.102549,0.101841,0.101384,0.100927};
+  for (int massP=4;massP<13;massP++){
+    double scaleNTotal=0;
   //DY bkg
-   // TString endfix ="DYBkg";
-   // double scaleF=0;
-   // double xsecF=2008.4;
-   // for(int w=1;w<363;w++){
-   //   f = TFile::Open(Form("/data7/khurana/NCUGlobalTuples/SPRING15/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/crab_DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_ForEIKO/150729_202330/0000/NCUGlobalTuples_%d.root",w));
-   //   if (!f || !f->IsOpen())continue;
-   //   TDirectory * dir = (TDirectory*)f->Get(Form("/data7/khurana/NCUGlobalTuples/SPRING15/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/crab_DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_ForEIKO/150729_202330/0000/NCUGlobalTuples_%d.root:/tree",w));
-   //   dir->GetObject("treeMaker",tree);
+    // double scaleF=0,xsecF=2008.4;
+    // TString endfix =Form("DY-%s",masspoint[massP].data());;
+    // for(int w=1;w<363;w++){
+    //   f = TFile::Open(Form("/data7/khurana/NCUGlobalTuples/SPRING15/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/crab_DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_ForEIKO/150729_202330/0000/NCUGlobalTuples_%d.root",w));if (!f || !f->IsOpen())continue;
+    //   TDirectory * dir = (TDirectory*)f->Get(Form("/data7/khurana/NCUGlobalTuples/SPRING15/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/crab_DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_ForEIKO/150729_202330/0000/NCUGlobalTuples_%d.root:/tree",w));   dir->GetObject("treeMaker",tree);
+
+    //DY100-200
+     double scaleF=0,xsecF=139.4;isDYHT=1;
+     TString endfix =Form("DYHT100-%s",masspoint[massP].data());;
+     for(int w=1;w<90;w++){
+       f = TFile::Open(Form("/data7/khurana/NCUGlobalTuples/SPRING15/DYJetsHTBins25nsSamples/DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/crab_DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0803/150812_162742/0000/NCUGlobalTuples_%d.root",w));if (!f || !f->IsOpen())continue;
+       TDirectory * dir = (TDirectory*)f->Get(Form("/data7/khurana/NCUGlobalTuples/SPRING15/DYJetsHTBins25nsSamples/DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/crab_DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0803/150812_162742/0000/NCUGlobalTuples_%d.root:/tree",w));   dir->GetObject("treeMaker",tree);
+
+    //DY200-400
+ // double scaleF=0,xsecF=42.75;isDYHT=1;
+ //     TString endfix =Form("DYHT200-%s",masspoint[massP].data());;
+ //     for(int w=1;w<45;w++){
+ //       f = TFile::Open(Form("/data7/khurana/NCUGlobalTuples/SPRING15/DYJetsHTBins25nsSamples/DYJetsToLL_M-50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/crab_DYJetsToLL_M-50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0803/150812_162821/0000/NCUGlobalTuples_%d.root",w));if (!f || !f->IsOpen())continue;
+ //       TDirectory * dir = (TDirectory*)f->Get(Form("/data7/khurana/NCUGlobalTuples/SPRING15/DYJetsHTBins25nsSamples/DYJetsToLL_M-50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/crab_DYJetsToLL_M-50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0803/150812_162821/0000/NCUGlobalTuples_%d.root:/tree",w));   dir->GetObject("treeMaker",tree);
+
+
+    //DY400-600
+    // double scaleF=0,xsecF=5.497;isDYHT=1;
+    // TString endfix =Form("DYHT400-%s",masspoint[massP].data());;
+    // for(int w=1;w<45;w++){
+    //    f = TFile::Open(Form("/data7/khurana/NCUGlobalTuples/SPRING15/DYJetsHTBins25nsSamples/DYJetsToLL_M-50_HT-400to600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/crab_DYJetsToLL_M-50_HT-400to600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0803/150812_162858/0000/NCUGlobalTuples_%d.root",w));if (!f || !f->IsOpen())continue;
+    //    TDirectory * dir = (TDirectory*)f->Get(Form("/data7/khurana/NCUGlobalTuples/SPRING15/DYJetsHTBins25nsSamples/DYJetsToLL_M-50_HT-400to600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/crab_DYJetsToLL_M-50_HT-400to600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0803/150812_162858/0000/NCUGlobalTuples_%d.root:/tree",w));   dir->GetObject("treeMaker",tree);
+
+
+    //DY600-inf
+     // double scaleF=0,xsecF=2.21;isDYHT=1;
+     // TString endfix =Form("DYHT600-%s",masspoint[massP].data());;
+     // for(int w=1;w<48;w++){
+     //    f = TFile::Open(Form("/data7/khurana/NCUGlobalTuples/SPRING15/DYJetsHTBins25nsSamples/DYJetsToLL_M-50_HT-600toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/crab_DYJetsToLL_M-50_HT-600toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0803/150812_162937/0000/NCUGlobalTuples_%d.root",w));if (!f || !f->IsOpen())continue;
+     //    TDirectory * dir = (TDirectory*)f->Get(Form("/data7/khurana/NCUGlobalTuples/SPRING15/DYJetsHTBins25nsSamples/DYJetsToLL_M-50_HT-600toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/crab_DYJetsToLL_M-50_HT-600toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0803/150812_162937/0000/NCUGlobalTuples_%d.root:/tree",w));   dir->GetObject("treeMaker",tree);
 
 
   //BulkGravitonZlepZqq  noCleaning_BulkGravToZZToZlepZhad_narrow_M-1000_13TeV-madgraph.root
-   isBG=1;
-     string  masspoint[13]={"600","800","1000","1200","1400","1600","1800","2000","2500","3000","3500","4000","4500"};
-     double xsecFB[13]={0.046310769831789535,0.010953371285280107,0.0033153186581553304,0.0011796819730577413,0.0004688386674106958,0.00025472097,0.00007503744,0.00004542880185027153,8.614571731526816e-6,1.9201182127764607e-6,4.25018556e-7,9.40119436e-8,2.08241719e-8};
-    double xsecFB2[13]={0.184219,0.142802,0.125936,0.117445,0.112554,0.109472,0.101401,0.10594,0.103732,0.102549,0.101841,0.101384,0.100927};
-       for (int massP=0;massP<13;massP++){
-         TString endfix =Form("BulkGravitonZlepZqq-%s",masspoint[massP].data());
-         double scaleF=0;
-         double xsecF=xsecFB[massP]*xsecFB2[massP]*0.047063412;
-        for(int w=1;w<2;w++){
-    	 f = TFile::Open(Form("/data2/syu/13TeV/BulkGravitonZlepZqq/noCleaning_BulkGravToZZToZlepZhad_narrow_M-%s_13TeV-madgraph.root",masspoint[massP].data()));
-    	 if (!f || !f->IsOpen())continue;
-    	 TDirectory * dir = (TDirectory*)f->Get(Form("/data2/syu/13TeV/BulkGravitonZlepZqq/noCleaning_BulkGravToZZToZlepZhad_narrow_M-%s_13TeV-madgraph.root:/tree",masspoint[massP].data()));
-     	 dir->GetObject("treeMaker",tree);
+   // isBG=1;
+   
+   // 	  TString endfix =Form("BulkGravitonZlepZqq-%s",masspoint[massP].data());
+   // 	  double scaleF=0, xsecF=xsecFB[massP]*xsecFB2[massP]*0.047063412;
+   // 	  for(int w=1;w<2;w++){
+   // 	   f = TFile::Open(Form("/data2/syu/13TeV/BulkGravitonZlepZqq/noCleaning_BulkGravToZZToZlepZhad_narrow_M-%s_13TeV-madgraph.root",masspoint[massP].data()));if (!f || !f->IsOpen())continue;
+   // 	 	 TDirectory * dir = (TDirectory*)f->Get(Form("/data2/syu/13TeV/BulkGravitonZlepZqq/noCleaning_BulkGravToZZToZlepZhad_narrow_M-%s_13TeV-madgraph.root:/tree",masspoint[massP].data()));dir->GetObject("treeMaker",tree);
 
 
   //Signal
-   // isSignal=1; double scaleF=0; double xsecF=1;
-   //   string  masspoint[13]={"600","800","1000","1200","1400","1600","1800","2000","2500","3000","3500","4000","4500"};
-  
-   //   for (int massP=0;massP<13;massP++){
-   //   TString endfix =Form("signal-%s",masspoint[massP].data());
-   //   for(int w=1;w<2;w++){
-   // f = TFile::Open(Form("/data2/syu/13TeV/ZprimeZhbb/ZprimeToZhToZlephbb_narrow_M-%s_13TeV-madgraph.root",masspoint[massP].data()));    if (!f || !f->IsOpen())continue;
-   //    TDirectory * dir = (TDirectory*)f->Get(Form("/data2/syu/13TeV/ZprimeZhbb/ZprimeToZhToZlephbb_narrow_M-%s_13TeV-madgraph.root:/tree",masspoint[massP].data()));    dir->GetObject("treeMaker",tree);
+    // isSignal=1; double scaleF=0; double xsecF=1;
+    // TString endfix =Form("signal-%s",masspoint[massP].data());
+    //   for(int w=1;w<2;w++){
+    // f = TFile::Open(Form("/data2/syu/13TeV/ZprimeZhbb/ZprimeToZhToZlephbb_narrow_M-%s_13TeV-madgraph.root",masspoint[massP].data()));    if (!f || !f->IsOpen())continue;
+    //    TDirectory * dir = (TDirectory*)f->Get(Form("/data2/syu/13TeV/ZprimeZhbb/ZprimeToZhToZlephbb_narrow_M-%s_13TeV-madgraph.root:/tree",masspoint[massP].data()));    dir->GetObject("treeMaker",tree);
 
-  cout<<w<<endl;
+      cout<<"massP="<<massP<<",w="<<w<<endl;
 
   TreeReader data(tree);
   //data.Print();
@@ -127,28 +151,7 @@ void optimization0807(){
     if(!hasElectron)continue;
     nPass[0]++;
 
-    // bool hasHadron=false;
 
-    // for(int ig=0; ig < nGenPar; ig++){
-
-    //     int pid = abs(genParId[ig]);
-    //     //if(pid!=11)continue;
-    //     int momId = abs(genMomParId[ig]);
-    //     if(
-    //         momId!=25 &&
-    //         momId!=9000001 &&
-    //         momId!=pid)
-    //     continue;
-    //     hasHadron=true;
-    //     if(hasHadron)break;
-
-
-    // }
-    
-
-
-    // if(!hasHadron)continue;
-    // nPass[1]++;
   
     TLorentzVector* thisB ,* thatB;
     bool isThisB=0,isThatB=0;
@@ -314,7 +317,7 @@ void optimization0807(){
 	}
 	if (checkMyEle)continue;
         if (jetSDmass[ij]<20||jetSDmass[ij]>220)continue;
-	if(isBG){
+	
 	  TLorentzVector* thisGraviton = (TLorentzVector*)jetP4->At(ij);
 	  *thisGraviton=*thisGraviton+l4_Z;
 	  //cout<<<<endl;
@@ -322,10 +325,10 @@ void optimization0807(){
 	  stringstream convert(masspoint[massP]);
 	  convert >> temp;
 	  //istringstream (masspoint[massP] ) >> temp;
-	  double temp2=temp*1.15;
+	  double temp2=temp*0.85;
 	  //cout<< temp2<<endl;
 	  if(thisGraviton->M()<temp2 )continue;
-	}
+	
 	if(!findAJet){
 	  l4_leadingJet = *thisJet;
           th1->Fill(jetSDmass[ij]);
@@ -370,12 +373,15 @@ void optimization0807(){
       std::cout << "nPass[" << i << "]= " << nPass[i] << std::endl;
   //th1->Draw();
   scaleF+=nPass[0];
-
+  scaleNTotal+=nTotal;
   }
   TFile* outFile = new TFile(Form("root_files/%s.root",endfix.Data()),"recreate");       
   
-  th1->Sumw2();
-  if(!isSignal)th1->Scale(5000*xsecF/scaleF);
+  
+  if(!isSignal){
+    if(!isDYHT)th1->Scale(5000*xsecF/scaleF);
+    else th1->Scale(5000*xsecF/scaleNTotal);
+  }
   th1->Write();
   th2->Write();
   th3->Write();
@@ -388,24 +394,12 @@ void optimization0807(){
   thr->Reset();
   thr2->Reset();
 
-  int width [nWidth]={30,35,50,45,50};
-  int bmin[nBmin]={91,93,95,97,99,101,103,105,107,109};
-  double eff[nWidth][nBmin];
-  for(int i=0;i<nWidth;i++){
-    for(int j=0;j<nBmin;j++){
-      //eff[i][j]=getEff(th1,bmin[j],bmin[j]+width[i]);
-      //cout<<"range={"<<bmin[j]<<","<<bmin[j]+width[i]<<"} and efficiency="<<eff[i][j]<<endl;
-    }
-  }
+
 
   
-   }
+  }
 
     }//sig mass point
 
 
-double  getEff(TH1F *h,int bmin,int bmax){
-  double denom=h->Integral();
-  double nomin=h->Integral(bmin,bmax);
-  return nomin/denom;
-}
+
