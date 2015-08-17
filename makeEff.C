@@ -1,3 +1,4 @@
+
 #include <TLegend.h>
 #include <vector>
 #include <iostream>
@@ -42,7 +43,6 @@ leg->SetBorderSize(2);
 }
 /*
 void makeEff(TString fin){
-
   c1 = new TCanvas("c1","",1360,768);
   f= TFile::Open(fin.Data());
   TH1F * th1 = (TH1F*)f->FindObjectAny("HMass");
@@ -59,7 +59,7 @@ void makeEff(TString fin){
 */
 void makeEff(){
   c1 = new TCanvas("c1","",1360,768);
-  string output="signv5";
+  string output="signv7DYHTtest";
   int twikiSign[13][nWidth][nBmin];
   int twikiSignNum[13][nWidth][nBmin];
   double twikiSignValue[13][nWidth][nBmin];
@@ -72,7 +72,7 @@ void makeEff(){
   for (int massP=0;massP<13;massP++){
   TString fin =Form("root_files/signal-%s.root",masspoint[massP].data()),
     //fin2 = Form("root_files/BulkGravitonZlepZqq-%s200.root",masspoint[massP].data());
-     fin2=Form("root_files/DY-%s.root",masspoint[massP].data());
+     fin2=Form("root_files/DYHTall-%s.root",masspoint[massP].data());
   f= TFile::Open(fin.Data());
   f2= TFile::Open(fin2.Data());
   TH1F * th1 = (TH1F*)f->FindObjectAny("HMass");
@@ -317,7 +317,7 @@ void makeEff(){
   
   }
   ofstream myfile;
-  myfile.open ("txt/twikiOP.txt");
+  myfile.open ("txt/twikiOPtest.txt");
   myfile<<"|*windowRange*|";
   for (int massP=0;massP<13;massP++)myfile<<"*"<<masspoint[massP].data()<<"Num*|";
   //myfile<<"*";

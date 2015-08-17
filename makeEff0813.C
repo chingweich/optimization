@@ -59,7 +59,7 @@ void makeEff(TString fin){
 */
 void makeEff0813(){
   c1 = new TCanvas("c1","",1360,768);
-  string output="signv7DYHT";
+  string output="signv7BG";
   int twikiSign[13][nWidth][nBmin];
   int twikiSignNum[13][nWidth][nBmin];
   double twikiSignValue[13][nWidth][nBmin];
@@ -73,8 +73,8 @@ void makeEff0813(){
   int bmin[nBmin]={90,95,100,105,110};
   for (int massP=0;massP<13;massP++){
   TString fin =Form("root_files/signal-%s.root",masspoint[massP].data()),
-    //fin2 = Form("root_files/BulkGravitonZlepZqq-%s200.root",masspoint[massP].data());
-     fin2=Form("root_files/DYHTall-%s.root",masspoint[massP].data());
+    fin2 = Form("root_files/BulkGravitonZlepZqq-%s.root",masspoint[massP].data());
+     //fin2=Form("root_files/DYHTall-%s.root",masspoint[massP].data());
   f= TFile::Open(fin.Data());
   f2= TFile::Open(fin2.Data());
   TH1F * th1 = (TH1F*)f->FindObjectAny("HMass");
