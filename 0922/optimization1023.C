@@ -213,7 +213,7 @@ TH1F* th1[6];
 	//cout<<thisJet->DeltaR(*checkThisEle)<<endl;
         if (thisJet->DeltaR(*checkThisEle)<0.8)continue;
         if (thisJet->DeltaR(*checkThatEle)<0.8)continue;
-        if (thisJet->Pt()<200 || thisJet->Eta()>2.4)continue;
+        if (thisJet->Pt()<200 || fabs(thisJet->Eta())>2.4)continue;
 
         if (jetSDmass[ij]<20||jetSDmass[ij]>220)continue;
 		if (jetPRmass[ij]<=-999)continue;
