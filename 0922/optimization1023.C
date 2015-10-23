@@ -110,62 +110,8 @@ TH1F* th1[6];
     data.GetEntry(jEntry);
     nTotal ++;
     
-    Int_t nGenPar        = data.GetInt("nGenPar");
-    Int_t* genParId      = data.GetPtrInt("genParId");
-    Int_t* genParSt      = data.GetPtrInt("genParSt");
-    Int_t* genMomParId   = data.GetPtrInt("genMomParId");
-    Int_t* genDa1      = data.GetPtrInt("genDa1");
-    Int_t* genDa2      = data.GetPtrInt("genDa2");
-    TClonesArray* genParP4 = (TClonesArray*) data.GetPtrTObject("genParP4");
-
-    bool hasElectron=false;
-
-    for(int ig=0; ig < nGenPar; ig++){
-
-        int pid = abs(genParId[ig]);
-        if(pid!=11)continue;
-        int momId = abs(genMomParId[ig]);
-        if(
-            momId!=23 &&
-            momId!=9000001 &&
-            momId!=pid)
-        continue;
-        hasElectron=true;
-        if(hasElectron)break;
-
-    }
-
-    if(!hasElectron)continue;
-    nPass[0]++;
-
-
-  
-    TLorentzVector* thisB ,* thatB;
-    bool isThisB=0,isThatB=0;
-    vector<int> thisBArray;
-
-    for(int ig=0; ig < nGenPar; ig++){
-      if(isThisB && isThatB)break;
-        int pid = abs(genParId[ig]);
-        int momId = abs(genMomParId[ig]);
-        if(
-            momId!=25 &&
-            momId!=9000001 &&
-            momId!=pid)
-        continue;
-	if (pid==5)thisBArray.push_back(ig);
-        if (pid==5 && !isThisB){
-	  thisB= (TLorentzVector*)genParP4->At(ig);
-	  isThisB=1;
-	  continue;
-	}
-	if(pid==5 && isThisB && !isThatB){
-	  thatB= (TLorentzVector*)genParP4->At(ig);
-          isThatB=1;
-	}
+   
 	
-
-    }
     //if (thisBArray.size()!=2)cout<<"thisBArray.size()="<<thisBArray.size()<<" , entry="<<jEntry<<endl;
 
      
@@ -216,30 +162,7 @@ TH1F* th1[6];
 
     bool findEPair=false;
     TLorentzVector l4_Z(0,0,0,0);
-    std::vector<int> myElectrons;
-
-    // select_electrons(data, myElectrons);
-
-    // select good electrons
-
-    for(int ie=0; ie< nEle; ie++)
-      {
-
-    	TLorentzVector* thisEle = (TLorentzVector*)eleP4->At(ie);
-
-    	if(fabs(thisEle->Eta())>2.5)continue;
-
-    	if(! (fabs(eleSCEta[ie])<1.442 || fabs(eleSCEta[ie])>1.566))continue;
-    	
-    	if(thisEle->Pt() < 35)continue;
-
-    	if(!passHEEPID[ie])continue;
-    	
-    	if(eleMiniIso[ie]>0.1)continue;
-
-    	myElectrons.push_back(ie);
-      }
-
+  
 	vector<int> Zee;
 	TLorentzVector * checkThisEle,* checkThatEle;
 	findEPair=isPassZee(data,Zee);
@@ -262,40 +185,7 @@ TH1F* th1[6];
 	if(!findEPair)continue;
 	l4_Z=(*checkThisEle+*checkThatEle);
 	
-    /*
-    for(unsigned int i=0; i< myElectrons.size(); i++)
-      {
-	int ie = myElectrons[i];
-	TLorentzVector* thisEle = (TLorentzVector*)eleP4->At(ie);
-	if(thisEle->Pt()<115)continue;
-		
-	for(unsigned int j=0; j< i; j++)
-	  {
-	    int je= myElectrons[j];
-
-	    if(eleCharge[ie]*eleCharge[je]>0)continue;
-
-	    TLorentzVector* thatEle = (TLorentzVector*)eleP4->At(je);
-
-	    Float_t mll  = (*thisEle+*thatEle).M();
-	    Float_t ptll = (*thisEle+*thatEle).Pt();
-	    
-
-	    if(mll<70 || mll>110)continue;
-	    if(ptll<200)continue;
-
-	    if(!findEPair){
-	      l4_Z=(*thisEle+*thatEle);
-	      checkThisEle = thisEle;
-              checkThatEle = thatEle;
-	    }
-	    findEPair=true;
-	  }	
-      }
-
-    if(!findEPair)
-      continue;
-    */
+   
 	nPass[4]++;
      
     //cout<<"a"<<jEntry<<endl;
@@ -312,9 +202,7 @@ TH1F* th1[6];
     TLorentzVector l4_leadingJet(0,0,0,0);
     bool findAJet=false;
     bool goodJet=0;
-    
-	
-
+   
 
     for(int ij=0; ij<nJet; ij++)
       {
@@ -327,13 +215,6 @@ TH1F* th1[6];
         if (thisJet->DeltaR(*checkThatEle)<0.8)continue;
         if (thisJet->Pt()<200 || thisJet->Eta()>2.4)continue;
 
-        bool checkMyEle=0;
-        for (unsigned int k=0;k<myElectrons.size();k++){
-          TLorentzVector* thisEle = (TLorentzVector*)eleP4->At(myElectrons[k]);
-		  if(thisEle->Pt()<115)continue;
-	  if (thisJet->DeltaR(*thisEle)<0.8)checkMyEle=1;
-	}
-	if (checkMyEle)continue;
         if (jetSDmass[ij]<20||jetSDmass[ij]>220)continue;
 		if (jetPRmass[ij]<=-999)continue;
 		if (jetPRmassL2L3Corr[ij]<=-999)continue;
