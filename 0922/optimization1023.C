@@ -49,22 +49,22 @@ TH1F* th1[6];
   
   for(int i=0;i<6;i++)th1[i]->Sumw2();
 
-  for (int massP=0;massP<13;massP++){
+  for (int massP=7;massP<13;massP++){
     double scaleNTotal=0;
     
     //DY100-200
-    // double scaleF=0,xsecF=139.4;isDYHT=1;
-    // TString endfix =Form("DYHT100-%s",masspoint[massP].data());;
-    // for(int w=1;w<90;w++){
-    //   f = TFile::Open(Form("/data7/syu/jet_CMSSW747/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_25ns/DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/results/NCUGlobalTuples_%d.root",w));if (!f || !f->IsOpen())continue;
-    //   TDirectory * dir = (TDirectory*)f->Get(Form("/data7/syu/jet_CMSSW747/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_25ns/DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/results/NCUGlobalTuples_%d.root:/tree",w));   dir->GetObject("treeMaker",tree);
+     double scaleF=0,xsecF=139.4;isDYHT=1;
+     TString endfix =Form("DYHT100-%s",masspoint[massP].data());;
+     for(int w=1;w<90;w++){
+       f = TFile::Open(Form("/data7/syu/jet_CMSSW747/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_25ns/DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/results/NCUGlobalTuples_%d.root",w));if (!f || !f->IsOpen())continue;
+       TDirectory * dir = (TDirectory*)f->Get(Form("/data7/syu/jet_CMSSW747/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_25ns/DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/results/NCUGlobalTuples_%d.root:/tree",w));   dir->GetObject("treeMaker",tree);
 
     //DY200-400
- // double scaleF=0,xsecF=42.75;isDYHT=1;
- //     TString endfix =Form("DYHT200-%s",masspoint[massP].data());;
- //     for(int w=1;w<45;w++){
- //       f = TFile::Open(Form("/data7/syu/jet_CMSSW747/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_25ns/DYJetsToLL_M-50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/results/NCUGlobalTuples_%d.root",w));if (!f || !f->IsOpen())continue;
- //       TDirectory * dir = (TDirectory*)f->Get(Form("/data7/syu/jet_CMSSW747/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_25ns/DYJetsToLL_M-50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/results/NCUGlobalTuples_%d.root:/tree",w));   dir->GetObject("treeMaker",tree);
+  //double scaleF=0,xsecF=42.75;isDYHT=1;
+  //    TString endfix =Form("DYHT200-%s",masspoint[massP].data());;
+  //    for(int w=1;w<45;w++){
+  //      f = TFile::Open(Form("/data7/syu/jet_CMSSW747/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_25ns/DYJetsToLL_M-50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/results/NCUGlobalTuples_%d.root",w));if (!f || !f->IsOpen())continue;
+  //      TDirectory * dir = (TDirectory*)f->Get(Form("/data7/syu/jet_CMSSW747/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_25ns/DYJetsToLL_M-50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/results/NCUGlobalTuples_%d.root:/tree",w));   dir->GetObject("treeMaker",tree);
 
 
     //DY400-600
@@ -85,11 +85,11 @@ TH1F* th1[6];
 
 
   //Signal
-     isSignal=1; double scaleF=0; double xsecF=1;
-     TString endfix =Form("signal-%s",masspoint[massP].data());
-       for(int w=1;w<2;w++){
-     f = TFile::Open(Form("/data7/syu/jet_CMSSW747/ZprimeToZhToZlephbb_25ns/ZprimeToZhToZlephbb_narrow_M-%s_13TeV-madgraph.root",masspoint[massP].data()));    if (!f || !f->IsOpen())continue;
-        TDirectory * dir = (TDirectory*)f->Get(Form("/data7/syu/jet_CMSSW747/ZprimeToZhToZlephbb_25ns/ZprimeToZhToZlephbb_narrow_M-%s_13TeV-madgraph.root:/tree",masspoint[massP].data()));    dir->GetObject("treeMaker",tree);
+   //  isSignal=1; double scaleF=0; double xsecF=1;
+   //  TString endfix =Form("signal-%s",masspoint[massP].data());
+   //    for(int w=1;w<2;w++){
+   //  f = TFile::Open(Form("/data7/syu/jet_CMSSW747/ZprimeToZhToZlephbb_25ns/ZprimeToZhToZlephbb_narrow_M-%s_13TeV-madgraph.root",masspoint[massP].data()));    if (!f || !f->IsOpen())continue;
+   //     TDirectory * dir = (TDirectory*)f->Get(Form("/data7/syu/jet_CMSSW747/ZprimeToZhToZlephbb_25ns/ZprimeToZhToZlephbb_narrow_M-%s_13TeV-madgraph.root:/tree",masspoint[massP].data()));    dir->GetObject("treeMaker",tree);
 
       cout<<"massP="<<massP<<",w="<<w<<endl;
 
